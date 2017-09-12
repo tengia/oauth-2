@@ -1,8 +1,11 @@
 # oauth2-client
 
-An OAuth2 client implementation, built on Retrofit2 and OkHttpClient3, with minimal dependencies and reducing the boilerplate you would normally do in you Java code, built with simplicity, resilience and transparency in mind. 
+An OAuth2 client implementation, that doesn't have strong oppinion about the technologies you should be using in your own project and kindly hides the boilerplate and resilience concerns around OAuth authentication so you can focus on your core business. 
 
 ## Why?
+
+It comes with out-of-the-box standard Java implementations for all it needs to operate, but also features optional modules with the most popular, edge technologies you will most likely want to use or you are already using. And it's easily extendable for more!
+when you de reducing the boilerplate code you would normally need to take care of, built with simplicity, resilience and transparency in mind. 
 
 The first and very obvious reason is that along with the positives that libraries, such as  [Spring Security OAuth](http://static.springsource.org/spring-security/oauth/) for example bring, they also drag a number of dependencies that your project might not be happy with. Contrary to that, this client library is built exclusively with standard Java SE. In fact, the decision to add a dependency to OkHttpClient3 for example was solely for the convenience that it brings along and to target a technology base that so far was not widely addressed directly. So if you come from the lightweight clients angle that might be just the client for you.
 
