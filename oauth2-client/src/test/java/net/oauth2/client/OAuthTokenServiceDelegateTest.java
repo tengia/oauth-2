@@ -7,6 +7,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +17,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import net.oauth2.AccessToken;
 import net.oauth2.AccessTokenGrantRequest;
+import net.oauth2.ClientCredentialsGrantRequest;
 import net.oauth2.RefreshTokenGrantRequest;
 import net.oauth2.client.http.TokenServiceHttpClient;
 
@@ -144,6 +147,100 @@ public class OAuthTokenServiceDelegateTest {
 		
 		assertNull(token);
 		assertEquals(refreshGrant, svc.getRefreshTokenGrantRequest());
+		verify(client, only()).post("token", refreshGrant);
+		verifyNoMoreInteractions(client);
+	}
+	
+	@Test
+	public void testRefreshTokenScopesExactMatch() throws OAuth2ProtocolException, IOException {
+		Collection<String> requestedScope = new ArrayList<>(2);
+		requestedScope.add("read");
+		requestedScope.add("write");
+		
+		AccessTokenGrantRequest grantRequest = new ClientCredentialsGrantRequest("test-client", "test-secret", requestedScope);
+		AccessToken returned_token = new AccessToken("test-token", null, 123L, "refresh", requestedScope);
+		RefreshTokenGrantRequest refreshGrant = new RefreshTokenGrantRequest("refresh", grantRequest.getClientId(), grantRequest.getClientSecret(), requestedScope);
+		given(this.client.post(TokenService.DEFAULT_URL_PATH, refreshGrant)).willReturn(returned_token);
+		
+		OAuthTokenServiceDelegate<AccessToken> svc = new OAuthTokenServiceDelegate<>(grantRequest, client); 
+		svc.setRefreshTokenGrantRequest(refreshGrant);
+		AccessToken token = svc.refresh("refresh");
+		
+		assertNotNull(token);
+		assertEquals(refreshGrant, svc.getRefreshTokenGrantRequest());
+		verify(client, only()).post("token", refreshGrant);
+		verifyNoMoreInteractions(client);
+	}
+	
+	@Test
+	public void testRefreshTokenScopesAnyOrder() throws OAuth2ProtocolException, IOException {
+		Collection<String> requestedScope = new ArrayList<>(2);
+		requestedScope.add("read");
+		requestedScope.add("write");
+		Collection<String> receivedScope = new ArrayList<>(1);
+		receivedScope.add("write");
+		receivedScope.add("read");
+		
+		AccessTokenGrantRequest grantRequest = new ClientCredentialsGrantRequest("test-client", "test-secret", requestedScope);
+		AccessToken returned_token = new AccessToken("test-token", null, 123L, "refresh", receivedScope);
+		RefreshTokenGrantRequest refreshGrant = new RefreshTokenGrantRequest("refresh", grantRequest.getClientId(), grantRequest.getClientSecret(), requestedScope);
+		given(this.client.post(TokenService.DEFAULT_URL_PATH, refreshGrant)).willReturn(returned_token);
+		
+		OAuthTokenServiceDelegate<AccessToken> svc = new OAuthTokenServiceDelegate<>(grantRequest, client); 
+		svc.setRefreshTokenGrantRequest(refreshGrant);
+		AccessToken token = svc.refresh("refresh");
+		
+		assertNotNull(token);
+		assertTrue(refreshGrant.getScopes().containsAll(svc.getRefreshTokenGrantRequest().getScopes()));
+		verify(client, only()).post("token", refreshGrant);
+		verifyNoMoreInteractions(client);
+	}
+	
+	@Test
+	public void testRefreshTokenScopesLessFail() throws OAuth2ProtocolException, IOException {
+		Collection<String> requestedScope = new ArrayList<>(2);
+		requestedScope.add("read");
+		requestedScope.add("write");
+		Collection<String> receivedScope = new ArrayList<>(1);
+		receivedScope.add("read");
+		
+		AccessTokenGrantRequest grantRequest = new ClientCredentialsGrantRequest("test-client", "test-secret", requestedScope);
+		AccessToken returned_token = new AccessToken("test-token", null, 123L, "refresh", receivedScope);
+		RefreshTokenGrantRequest refreshGrant = new RefreshTokenGrantRequest("refresh", grantRequest.getClientId(), grantRequest.getClientSecret(), requestedScope);
+		given(this.client.post(TokenService.DEFAULT_URL_PATH, refreshGrant)).willReturn(returned_token);
+		
+		OAuthTokenServiceDelegate<AccessToken> svc = new OAuthTokenServiceDelegate<>(grantRequest, client); 
+		svc.setRefreshTokenGrantRequest(refreshGrant);
+		try{
+			AccessToken token = svc.refresh("refresh");
+			fail("expected IllegalStateException that was never thrown");
+		} catch(IllegalStateException e){}
+		
+		verify(client, only()).post("token", refreshGrant);
+		verifyNoMoreInteractions(client);
+	}
+	
+	@Test
+	public void testRefreshTokenSameSizeDifferentSocpesFail() throws OAuth2ProtocolException, IOException {
+		Collection<String> requestedScope = new ArrayList<>(2);
+		requestedScope.add("read");
+		requestedScope.add("write");
+		Collection<String> receivedScope = new ArrayList<>(1);
+		receivedScope.add("_read_");
+		receivedScope.add("_write_");
+		
+		AccessTokenGrantRequest grantRequest = new ClientCredentialsGrantRequest("test-client", "test-secret", requestedScope);
+		AccessToken returned_token = new AccessToken("test-token", null, 123L, "refresh", receivedScope);
+		RefreshTokenGrantRequest refreshGrant = new RefreshTokenGrantRequest("refresh", grantRequest.getClientId(), grantRequest.getClientSecret(), requestedScope);
+		given(this.client.post(TokenService.DEFAULT_URL_PATH, refreshGrant)).willReturn(returned_token);
+		
+		OAuthTokenServiceDelegate<AccessToken> svc = new OAuthTokenServiceDelegate<>(grantRequest, client); 
+		svc.setRefreshTokenGrantRequest(refreshGrant);
+		try{
+			AccessToken token = svc.refresh("refresh");
+			fail("expected IllegalStateException that was never thrown");
+		} catch(IllegalStateException e){}
+		
 		verify(client, only()).post("token", refreshGrant);
 		verifyNoMoreInteractions(client);
 	}
