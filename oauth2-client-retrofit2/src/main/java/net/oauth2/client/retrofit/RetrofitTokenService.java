@@ -1,3 +1,10 @@
+/* 
+ * Copyright (c) 2017 Georgi Pavlov (georgi.pavlov@isoft-technology.com).
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the MIT license which accompanies 
+ * this distribution, and is available at 
+ * https://github.com/tengia/oauth-2/blob/master/LICENSE
+ */
 package net.oauth2.client.retrofit;
 
 import java.io.IOException;
@@ -23,6 +30,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import retrofit2.Response;
 
+/**
+ * A squareup Retrofit Token Service delegate for fetching refreshing OAuth tokens.
+ *
+ * @param <S>
+ * @param <T>
+ */
 public class RetrofitTokenService<S extends TokenEndpoint, T extends AccessToken> implements TokenService {
 	
 	protected static final Logger LOGGER = LoggerFactory.getLogger(RetrofitTokenService.class);

@@ -1,3 +1,11 @@
+/* 
+ * Copyright (c) 2017 Georgi Pavlov (georgi.pavlov@isoft-technology.com).
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the MIT license which accompanies 
+ * this distribution, and is available at 
+ * https://github.com/tengia/oauth-2/blob/master/LICENSE
+ */
+
 package net.oauth2;
 
 import java.beans.BeanInfo;
@@ -10,8 +18,30 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Utility class for operations on bean-like classes.  
+ *
+ */
 public class BeanUtils {
 
+	/**
+	 * The method transforms a oauth payload object properties (grant or token) to a 
+	 * properties map by introspection. The introspection will cascade through several 
+	 * options to find out the key for a property value in the resulting map. This allows
+	 * properties such as accessToken to be presented by keys such as "acces_tokens".
+	 * The options to instruct that are 1. to supply a second argument that supplies this
+	 * mapping 2. annotate properties or getters with OAuthPayloadProperty and supply 
+	 * the desired key name as value of the annotation 3. stick to the same naming convention
+	 * both for property names and keys.  
+	 * 
+	 * @param grantRequest
+	 * @param propertyMap
+	 * @return
+	 * @throws IntrospectionException
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 */
 	public static <T> Map<String, Object> asMap(T grantRequest, Map<String, String> propertyMap) throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Map<String, Object> values = new HashMap<String, Object>();
 		BeanInfo info = Introspector.getBeanInfo(grantRequest.getClass(), Object.class);

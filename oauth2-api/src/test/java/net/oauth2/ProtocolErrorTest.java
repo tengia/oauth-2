@@ -1,3 +1,11 @@
+/* 
+ * Copyright (c) 2017 Georgi Pavlov (georgi.pavlov@isoft-technology.com).
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the MIT license which accompanies 
+ * this distribution, and is available at 
+ * https://github.com/tengia/oauth-2/blob/master/LICENSE
+ */
+
 package net.oauth2;
 
 import static org.junit.Assert.assertNull;
@@ -29,7 +37,8 @@ public class ProtocolErrorTest {
 		String state = "state";
 		URI uri = new URI("");
 		ProtocolError err = new ProtocolError(error, descr, uri, state);
-		assertEquals(error, err.getError());
+		String errString = err.getError();
+		assertEquals(error, errString);
 		assertEquals(descr, err.getDescription());
 		assertEquals(state, err.getState());
 		assertEquals(uri, err.getUri());

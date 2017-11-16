@@ -1,3 +1,11 @@
+/* 
+ * Copyright (c) 2017 Georgi Pavlov (georgi.pavlov@isoft-technology.com).
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the MIT license which accompanies 
+ * this distribution, and is available at 
+ * https://github.com/tengia/oauth-2/blob/master/LICENSE
+ */
+
 package net.oauth2;
 
 import java.util.Collection;
@@ -5,6 +13,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Models the "refresh_token" type of oauth grant requests.
+ * 
+ */
 public class RefreshTokenGrantRequest extends AccessTokenGrantRequest {
 
 	protected String refreshToken;

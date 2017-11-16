@@ -1,3 +1,10 @@
+/* 
+ * Copyright (c) 2017 Georgi Pavlov (georgi.pavlov@isoft-technology.com).
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the MIT license which accompanies 
+ * this distribution, and is available at 
+ * https://github.com/tengia/oauth-2/blob/master/LICENSE
+ */
 package net.oauth2.clients.twitter;
 
 import java.io.IOException;
@@ -7,8 +14,8 @@ import java.util.Collections;
 import java.util.Scanner;
 
 import net.oauth2.ClientCredentialsGrantRequest;
-import net.oauth2.client.OAuthTokenServiceDelegate;
 import net.oauth2.client.OAuth2ProtocolException;
+import net.oauth2.client.OAuthTokenServiceDelegate;
 import net.oauth2.client.SimpleTokenProvider;
 import net.oauth2.client.TokenProvider;
 import net.oauth2.client.http.TokenServiceHttpClient;
