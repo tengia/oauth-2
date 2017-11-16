@@ -1,3 +1,11 @@
+/* 
+ * Copyright (c) 2017 Georgi Pavlov (georgi.pavlov@isoft-technology.com).
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the MIT license which accompanies 
+ * this distribution, and is available at 
+ * https://github.com/tengia/oauth-2/blob/master/LICENSE
+ */
+
 package net.oauth2.client.http;
 
 import java.io.IOException;
@@ -12,17 +20,29 @@ import java.util.stream.Stream;
 import commons.http.WwwFormUrlEncodedCodec;
 import net.oauth2.ParametersMap;
 
+/**
+ * A www.form-encode codec for oauth payloads posted to OAuth Token Service.  
+ *
+ */
 public class FormEncodeDataBinding extends WwwFormUrlEncodedCodec {
 	
 	public FormEncodeDataBinding() {}
 
 	//Encoding
 
+	/**
+	 * Register custom serializer, e.g. for scopes with different delimiters than standard
+	 */
 	@Override
 	public <T> FormEncodeDataBinding with(String mappedName, Serializer<T> serializer) {
 		return (FormEncodeDataBinding) super.with(mappedName, serializer);
 	}
 	
+	/**
+	 * Collection serializer for grant/token scopes that uses whitespace as delimeter.
+	 *
+	 * @param <T>
+	 */
 	public static class CollectionSerializer<T> implements Serializer<Collection<T>> {
 		@Override
 		public String serialize(Collection<T> value) {
@@ -38,6 +58,13 @@ public class FormEncodeDataBinding extends WwwFormUrlEncodedCodec {
 		}
 	}
 	
+	/**
+	 * Encodes a parameters map grant/token payload into www.form-encode string
+	 * 
+	 * @param bag
+	 * @param serializersMappings
+	 * @return
+	 */
 	public <T extends ParametersMap> String encode(final T bag, @SuppressWarnings("rawtypes") Map<String, Serializer> serializersMappings) {
 		Map<String, Object> grantRequestFormFrields = null;
 		try {
@@ -50,11 +77,18 @@ public class FormEncodeDataBinding extends WwwFormUrlEncodedCodec {
 	
 	// Decoding
 	
+	/**
+	 * Register custom deserializer, e.g. for scopes that use non-standard delimiter
+	 */
 	@Override
 	public <T> FormEncodeDataBinding with(String mappedName, Deserializer<T> deserializer) {
 		return (FormEncodeDataBinding) super.with(mappedName, deserializer);
 	}
 	
+	/**
+	 * Deserizalizer for scope strings into collection. Implies whitespace as delimiter. 
+	 * @param <T>
+	 */
 	public static class CollectionDeserializer<T> implements Deserializer<Collection<T>> {
 		private String delimiterPattern;
 		private boolean returnUnmodifiable;
@@ -84,6 +118,7 @@ public class FormEncodeDataBinding extends WwwFormUrlEncodedCodec {
 	}
 	
 	/**
+	 * Decodes a www.form-encode string into grant/token object of the given targetClass type T.
 	 * Requires a constructor with a single Map<String, ?> parameter.
 	 * 
 	 * @param encodedString

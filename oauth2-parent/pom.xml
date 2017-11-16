@@ -1,27 +1,23 @@
-<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
-	license agreements. See the NOTICE file distributed with this work for additional 
-	information regarding copyright ownership. The ASF licenses this file to 
-	you under the Apache License, Version 2.0 (the "License"); you may not use 
-	this file except in compliance with the License. You may obtain a copy of 
-	the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
-	by applicable law or agreed to in writing, software distributed under the 
-	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
-	OF ANY KIND, either express or implied. See the License for the specific 
-	language governing permissions and limitations under the License. -->
-
+<!-- 
+  Copyright (c) 2017 Georgi Pavlov (georgi.pavlov@isoft-technology.com).
+  All rights reserved. This program and the accompanying materials
+  are made available under the terms of the MIT license which accompanies 
+  this distribution, and is available at 
+  https://github.com/tengia/oauth-2/blob/master/LICENSE
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>oauth2-parent</artifactId>
 	<packaging>pom</packaging>
-	
-	<name>${project.groupId}:${project.artifactId}</name>	
+
+	<name>${project.groupId}:${project.artifactId}</name>
 	<url>https://github.com/tengia/oauth-2</url>
 	<inceptionYear>2017</inceptionYear>
 
 	<parent>
-		<groupId>oauth-2.net</groupId>
+		<groupId>net.oauth-2</groupId>
 		<artifactId>oauth2-client-bom</artifactId>
 		<version>1.0.0</version>
 		<relativePath>../oauth2-client-bom/pom.xml</relativePath>
@@ -47,7 +43,7 @@
 		<developerConnection>scm:git:git@github.com:tengia/oauth-2.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
-	
+
 	<issueManagement>
 		<url>https://github.com/tengia/oauth-2/issues</url>
 	</issueManagement>
@@ -59,18 +55,18 @@
 		</snapshotRepository>
 		<repository>
 			<id>ossrh</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
 		</repository>
 	</distributionManagement>
 
 	<properties>
- 		<java.version>1.8</java.version>
- 		<encoding>UTF-8</encoding>
+		<java.version>1.8</java.version>
+		<encoding>UTF-8</encoding>
 		<project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-				
+
 		<junit.version>4.12</junit.version>
 		<mockito.version>1.10.19</mockito.version>
 		<slf4j.version>1.7.9</slf4j.version>
@@ -82,7 +78,7 @@
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
 				<version>${slf4j.version}</version>
-			</dependency>		
+			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
@@ -91,7 +87,7 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-all</artifactId>
-				<version>1.10.19</version>
+				<version>${mockito.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -99,9 +95,9 @@
 	<profiles>
 		<profile>
 			<id>dev</id>
-		    <activation>
-		        <activeByDefault>true</activeByDefault>
-		    </activation>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
 			<build>
 				<pluginManagement>
 					<plugins>
@@ -123,7 +119,7 @@
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-surefire-plugin</artifactId>
 							<version>2.18</version>
-						</plugin>				
+						</plugin>
 						<plugin>
 							<groupId>org.jacoco</groupId>
 							<artifactId>jacoco-maven-plugin</artifactId>
@@ -139,7 +135,7 @@
 							<!-- java Powermock fix -->
 							<argLine>${argLine} -noverify</argLine>
 						</configuration>
-					</plugin>				
+					</plugin>
 					<plugin>
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
@@ -172,14 +168,14 @@
 								<configuration>
 									<rules>
 										<!-- <rule> -->
-										<!-- 	<element>BUNDLE</element> -->
-										<!-- 	<limits> -->
-										<!-- 		<limit> -->
-										<!-- 			<counter>COMPLEXITY</counter> -->
-										<!-- 			<value>COVEREDRATIO</value> -->
-										<!-- 			<minimum>0.60</minimum> -->
-										<!-- 		</limit> -->
-										<!-- 	</limits> -->
+										<!-- <element>BUNDLE</element> -->
+										<!-- <limits> -->
+										<!-- <limit> -->
+										<!-- <counter>COMPLEXITY</counter> -->
+										<!-- <value>COVEREDRATIO</value> -->
+										<!-- <minimum>0.60</minimum> -->
+										<!-- </limit> -->
+										<!-- </limits> -->
 										<!-- </rule> -->
 									</rules>
 								</configuration>
@@ -187,62 +183,78 @@
 						</executions>
 					</plugin>
 				</plugins>
-			</build>		
+			</build>
 		</profile>
 		<profile>
 			<id>release</id>
 			<build>
-			  <plugins>
-			   <plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-source-plugin</artifactId>
-			    <version>2.2.1</version>
-			    <executions>
-			     <execution>
-			      <id>attach-sources</id>
-			      <goals>
-			       <goal>jar-no-fork</goal>
-			      </goals>
-			     </execution>
-			    </executions>
-			   </plugin>
-			   <plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-javadoc-plugin</artifactId>
-			    <version>2.9.1</version>
-			    <executions>
-			     <execution>
-			      <id>attach-javadocs</id>
-			      <goals>
-			       <goal>jar</goal>
-			      </goals>
-			     </execution>
-			    </executions>
-			   </plugin>
-			   <plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-gpg-plugin</artifactId>
-			    <version>1.5</version>
-			    <executions>
-			     <execution>
-			      <id>sign-artifacts</id>
-			      <phase>verify</phase>
-			      <goals>
-			       <goal>sign</goal>
-			      </goals>
-			     </execution>
-			    </executions>
-			   </plugin>
-			  </plugins>
-			 </build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>2.2.1</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>2.9.1</version>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+								<configuration>
+									<additionalparam>-Xdoclint:none</additionalparam>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.6</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<version>1.6.8</version>
+						<extensions>true</extensions>
+						<configuration>
+							<serverId>ossrh</serverId>
+							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
-	
+
 	<modules>
 		<module>../oauth2-commons</module>
-		<module>../oauth2-api</module>		
+		<module>../oauth2-api</module>
 		<module>../oauth2-client</module>
-		<module>../oauth2-client-http</module>
+		<module>../oauth2-client-http-javase</module>
+		<module>../oauth2-client-http-apache</module>
+		<module>../oauth2-client-http-okhttp3</module>
 		<module>../oauth2-databinding-gson</module>
 		<module>../oauth2-databinding-jackson</module>
 		<module>../oauth2-client-retrofit2</module>

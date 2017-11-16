@@ -1,7 +1,16 @@
+/* 
+ * Copyright (c) 2017 Georgi Pavlov (georgi.pavlov@isoft-technology.com).
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the MIT license which accompanies 
+ * this distribution, and is available at 
+ * https://github.com/tengia/oauth-2/blob/master/LICENSE
+ */
+
 package net.oauth2.client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -127,6 +136,79 @@ public class AccessTokenGrantTests {
 		assertEquals("test", map.get("grant_type"));
 		assertTrue(((Long)map.get("long_prop")).longValue() == 123L);
 		assertEquals(map.get("collection_prop"), tp.getCollection());
+	}
+	
+	@Test
+	public void testToString() {
+		AccessTokenGrantRequest grantRequest = new AccessTokenGrantRequest("grant_type", "client_id", "client_secret", null);
+		assertEquals("AccessTokenGrantRequest [grant_type=grant_type, client_id=client_id, client_secret=client_secret, scope=null]", grantRequest.toString());
+	}
+		
+	@Test
+	public void testEqualsIsReflexive() {
+		AccessTokenGrantRequest grantRequest = new AccessTokenGrantRequest("grant_type", "client_id", "client_secret", null);
+		// must be reflexive: for any non-null reference value x, x.equals(x) must return true
+		assertTrue(grantRequest.equals(grantRequest));
+		// more than one invocation of hashCode() on the same object will return the same integer
+		assertTrue(grantRequest.hashCode() == grantRequest.hashCode());
+	}
+	
+	@Test
+	public void testEqualsIsSymmetric() {
+		AccessTokenGrantRequest grantRequest1 = new AccessTokenGrantRequest("grant_type", "client_id", "client_secret", null);
+		AccessTokenGrantRequest grantRequest2 = new AccessTokenGrantRequest("grant_type", "client_id", "client_secret", null);
+
+		// must be symmetric: for any non-null reference values x and y, x.equals(y) must return true if and only if y.equals(x) returns true
+		assertTrue(grantRequest1.equals(grantRequest2) && grantRequest1.equals(grantRequest2));
+		//Invocation of hashCode on equal objects produces the same integer
+		assertTrue(grantRequest1.hashCode() == grantRequest2.hashCode());
+	}
+	
+	@Test
+	public void testEqualsIsTransitive() {
+		AccessTokenGrantRequest grantRequest1 = new AccessTokenGrantRequest("grant_type", "client_id", "client_secret", null);
+		AccessTokenGrantRequest grantRequest2 = new AccessTokenGrantRequest("grant_type", "client_id", "client_secret", null);
+		AccessTokenGrantRequest grantRequest3 = new AccessTokenGrantRequest("grant_type", "client_id", "client_secret", null);
+		
+		// must be transitive: for any non-null reference value x, y and z, if x.equals(y) returns true and y.equals(z) returns true, then x.equals(z) must return true
+		assertTrue(grantRequest1.equals(grantRequest2) && grantRequest2.equals(grantRequest3) && grantRequest1.equals(grantRequest3));
+		// Invocation of hashCode on equal objects produces the same integer
+		assertTrue(grantRequest1.hashCode() == grantRequest2.hashCode() && grantRequest1.hashCode() == grantRequest3.hashCode());
+	}
+	
+	@Test
+	public void testEqualsIsConsistent() {
+		AccessTokenGrantRequest grantRequest1 = new AccessTokenGrantRequest("grant_type", "client_id", "client_secret", null);
+		AccessTokenGrantRequest grantRequest2 = new AccessTokenGrantRequest("grant_type", "client_id", "client_secret", null);
+		
+		// must be consistent: for any non-null reference values x and y, multiple invocations of x.equals(y) must return the same result if no information used in equals comparison test is modifed
+		assertTrue(grantRequest1.equals(grantRequest2) && grantRequest1.equals(grantRequest2));
+	}
+	
+	@Test
+	public void testEqualsIsFalseForNullArguments() {
+		AccessTokenGrantRequest grantRequest = new AccessTokenGrantRequest("grant_type", "client_id", "client_secret", null);
+		//handling null arguments: for any non-null reference value x, x.equals(null) must return false
+		assertFalse(grantRequest.equals(null));
+	}
+	
+	@Test
+	public void testEqualsIsFalseForDifferentTypeArguments() {
+		AccessTokenGrantRequest grantRequest = new AccessTokenGrantRequest("grant_type", "client_id", "client_secret", null);
+		//test on equality with different type will return false
+		assertFalse(grantRequest.equals(new Object()));
+	}
+	
+	@Test
+	public void testEqualsIsFalseOnNotEqualCfgObjects() {
+		
+		AccessTokenGrantRequest grantRequest1 = new AccessTokenGrantRequest("grant_type", "client_id", "client_secret", null);
+		AccessTokenGrantRequest grantRequest2 = new AccessTokenGrantRequest("grant_type1", "client_id1", "client_secret1", null);
+		
+		// objects are not equal
+		assertFalse(grantRequest1.equals(grantRequest2));
+		// Invocation of hashCode on not equal objects produces different results
+		assertTrue(grantRequest1.hashCode() != grantRequest2.hashCode());
 	}
 	
 }

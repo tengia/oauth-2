@@ -1,3 +1,11 @@
+/* 
+ * Copyright (c) 2017 Georgi Pavlov (georgi.pavlov@isoft-technology.com).
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the MIT license which accompanies 
+ * this distribution, and is available at 
+ * https://github.com/tengia/oauth-2/blob/master/LICENSE
+ */
+
 package net.oauth2.client;
 
 import java.io.IOException;
@@ -8,7 +16,7 @@ import java.util.concurrent.ScheduledFuture;
 import net.oauth2.AccessToken;
 
 /**
- * A Token Provider that repeatedly provides Access Token. Implementations may
+ * A Token Provider that continuously provides Access Token. Implementations may
  * use the refresh capabilities of the OAuth infrastructure, if any, or re-fetch
  * a new Access Token with each repetition.
  * 

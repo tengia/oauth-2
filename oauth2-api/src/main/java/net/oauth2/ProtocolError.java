@@ -1,3 +1,11 @@
+/* 
+ * Copyright (c) 2017 Georgi Pavlov (georgi.pavlov@isoft-technology.com).
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the MIT license which accompanies 
+ * this distribution, and is available at 
+ * https://github.com/tengia/oauth-2/blob/master/LICENSE
+ */
+
 package net.oauth2;
 
 import java.net.URI;
@@ -6,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Models oauth-2 standard protocol error payload
  * https://tools.ietf.org/html/rfc6749#section-4.1.2.1
  */
 public class ProtocolError implements ParametersMap{

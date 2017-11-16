@@ -1,3 +1,11 @@
+/* 
+ * Copyright (c) 2017 Georgi Pavlov (georgi.pavlov@isoft-technology.com).
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the MIT license which accompanies 
+ * this distribution, and is available at 
+ * https://github.com/tengia/oauth-2/blob/master/LICENSE
+ */
+
 package net.oauth2;
 
 import java.util.Collection;
@@ -6,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * The basis OAuth access token grant request type.
  * https://tools.ietf.org/html/rfc6749#section-1.3
  */
 public class AccessTokenGrantRequest implements ParametersMap{
@@ -15,6 +24,14 @@ public class AccessTokenGrantRequest implements ParametersMap{
 	private final String client_secret;
 	private Collection<String> scope;
 
+	/**
+	 * Initializes grant request from properties.
+	 * 
+	 * @param grantType The grant type of this grant request, such as "authorization_code" or "client_secret"
+	 * @param clientId The client id in this grant request
+	 * @param clientSecret The client secret in this grant request
+	 * @param scope The collection of scopes in this grant request
+	 */
 	public AccessTokenGrantRequest(final String grantType, final String clientId, final String clientSecret,
 			final Collection<String> scope) {
 		this.grant_type = grantType;
@@ -31,6 +48,10 @@ public class AccessTokenGrantRequest implements ParametersMap{
 		this.scope = scopes;
 	}
 
+	/**
+	 * Returns the grant type of this grant request. It is a string such as "authorization_code" or "client_secret".
+	 * @return
+	 */
 	public String getGrantType() {
 		return grant_type;
 	}

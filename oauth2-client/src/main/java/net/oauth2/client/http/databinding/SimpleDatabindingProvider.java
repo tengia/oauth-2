@@ -1,8 +1,13 @@
+/* 
+ * Copyright (c) 2017 Georgi Pavlov (georgi.pavlov@isoft-technology.com).
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the MIT license which accompanies 
+ * this distribution, and is available at 
+ * https://github.com/tengia/oauth-2/blob/master/LICENSE
+ */
 package net.oauth2.client.http.databinding;
 
 import java.io.IOException;
-import java.text.NumberFormat;
-import java.text.ParsePosition;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +22,11 @@ import net.oauth2.ProtocolError;
 import net.oauth2.client.http.DataBindingProvider;
 import net.oauth2.client.http.FormEncodeDataBinding;
 
+/**
+ * A data binding provider implementation for serialization and deserialization 
+ * of standard OAuth protocol payloads to and from the object model in this library.
+ *
+ */
 public class SimpleDatabindingProvider implements DataBindingProvider<Object>{
 
 	private static final Pattern objectEntriesPattern = Pattern.compile("\\{(.*?)\\}");
@@ -83,6 +93,8 @@ public class SimpleDatabindingProvider implements DataBindingProvider<Object>{
 		} else if(valueString.startsWith("[")){
 			//handle arrays
 			throw new IllegalArgumentException("Unsuported type. Arrays are not supported: " + valueString);
+		} else if(valueString.endsWith("\"")){
+			throw new IllegalArgumentException("malformed JSON. Strings must start with \".");
 		} else {
 			//handle numbers
 			value = parseNumber(valueString);  
@@ -98,7 +110,7 @@ public class SimpleDatabindingProvider implements DataBindingProvider<Object>{
 		if(value.startsWith("\"")){
 			value = value.replaceFirst("\"", "");
 			if(value.charAt(value.length()-1)!='"')
-				throw new IllegalArgumentException("malformed JSON. Starts with \" but is missing the end \": " + value);
+				throw new IllegalArgumentException("malformed JSON. Starts with \" but is missing the end \": \"" + value);
 			value = value.substring(0, value.length()-1);
 		} else {
 			throw new IllegalArgumentException("malformed JSON. Strings must start with \".");
@@ -110,12 +122,12 @@ public class SimpleDatabindingProvider implements DataBindingProvider<Object>{
 		return FormEncodeDataBinding.CollectionDeserializer.parseDelimitedString(value, null, false);
 	}
 		
-	public boolean isNumeric(String str) {
+	/*public boolean isNumeric(String str) {
 		NumberFormat formatter = NumberFormat.getInstance();
 		ParsePosition pos = new ParsePosition(0);
 		formatter.parse(str, pos);
 		return str.length() == pos.getIndex();
-	}
+	}*/
 
 	private Long parseNumber(String value){
 		Long number = null;
@@ -146,16 +158,6 @@ public class SimpleDatabindingProvider implements DataBindingProvider<Object>{
 			throw new IllegalArgumentException("Expecting json object as top-level entry");
 		}
 		return (T) err;
-	}
-	
-	public static void main(String[] args) throws IOException {
-		String s = "{ \"access_token\": \"test_token\", \"token_type\": \"bearer\", \"expires_in\": 123, \"refresh_token\": \"test_refresh_token\", \"scope\": \"read write\"}";
-		SimpleDatabindingProvider p = new SimpleDatabindingProvider();
-		AccessToken token = p.parseToken(s, AccessToken.class);
-		System.out.println(token);
-		String errstr = "{ \"error\": \"invalid_token\", \"error_description\": \"descr\", \"state\": \"login\"}";
-		ProtocolError err = p.parseError(errstr, ProtocolError.class);
-		System.out.println(err);
 	}
 
 }
