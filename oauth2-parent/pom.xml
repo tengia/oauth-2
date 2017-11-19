@@ -19,7 +19,7 @@
 	<parent>
 		<groupId>net.oauth-2</groupId>
 		<artifactId>oauth2-client-bom</artifactId>
-		<version>1.0.0</version>
+		<version>1.1.0</version>
 		<relativePath>../oauth2-client-bom/pom.xml</relativePath>
 	</parent>
 
@@ -41,7 +41,7 @@
 		<url>https://github.com/tengia/oauth-2</url>
 		<connection>scm:git:git@github.com:tengia/oauth-2.git</connection>
 		<developerConnection>scm:git:git@github.com:tengia/oauth-2.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>v1.1.0</tag>
 	</scm>
 
 	<issueManagement>
@@ -181,67 +181,6 @@
 								</configuration>
 							</execution>
 						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>release</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-source-plugin</artifactId>
-						<version>2.2.1</version>
-						<executions>
-							<execution>
-								<id>attach-sources</id>
-								<goals>
-									<goal>jar-no-fork</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.9.1</version>
-						<executions>
-							<execution>
-								<id>attach-javadocs</id>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-								<configuration>
-									<additionalparam>-Xdoclint:none</additionalparam>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.6</version>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.sonatype.plugins</groupId>
-						<artifactId>nexus-staging-maven-plugin</artifactId>
-						<version>1.6.8</version>
-						<extensions>true</extensions>
-						<configuration>
-							<serverId>ossrh</serverId>
-							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-							<autoReleaseAfterClose>true</autoReleaseAfterClose>
-						</configuration>
 					</plugin>
 				</plugins>
 			</build>
