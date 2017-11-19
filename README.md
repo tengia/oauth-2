@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/tengia/oauth-2.svg?branch=master)](https://travis-ci.org/tengia/oauth-2)
+
 # oauth2-client
 
 An OAuth2 client implementation, that doesn't have strong oppinion about the technologies you should be using in your own project and kindly hides the boilerplate and resilience concerns around OAuth authentication so you can focus on your core business. 
