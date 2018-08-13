@@ -66,13 +66,13 @@ public class FormEncodeDataBinding extends WwwFormUrlEncodedCodec {
 	 * @return
 	 */
 	public <T extends ParametersMap> String encode(final T bag, @SuppressWarnings("rawtypes") Map<String, Serializer> serializersMappings) {
-		Map<String, Object> grantRequestFormFrields = null;
+		Map<String, Object> grantRequestFormFields = null;
 		try {
-			grantRequestFormFrields = bag.map();
+			grantRequestFormFields = bag.map();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		return this.encodeStream(grantRequestFormFrields.entrySet().stream(), serializersMappings);
+		return this.encodeStream(grantRequestFormFields.entrySet().stream(), serializersMappings);
 	}
 	
 	// Decoding

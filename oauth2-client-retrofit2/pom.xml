@@ -12,7 +12,7 @@
 	<parent>
 		<groupId>net.oauth-2</groupId>
 		<artifactId>oauth2-parent</artifactId>
-		<version>1.1.0</version>
+		<version>1.1.1</version>
 		<relativePath>../oauth2-parent/pom.xml</relativePath>
 	</parent>
 	

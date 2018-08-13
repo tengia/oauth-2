@@ -1,8 +1,8 @@
-/* 
+/*
  * Copyright (c) 2017 Georgi Pavlov (georgi.pavlov@isoft-technology.com).
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the MIT license which accompanies 
- * this distribution, and is available at 
+ * are made available under the terms of the MIT license which accompanies
+ * this distribution, and is available at
  * https://github.com/tengia/oauth-2/blob/master/LICENSE
  */
 
@@ -26,7 +26,7 @@ public class AccessTokenGrantRequest implements ParametersMap{
 
 	/**
 	 * Initializes grant request from properties.
-	 * 
+	 *
 	 * @param grantType The grant type of this grant request, such as "authorization_code" or "client_secret"
 	 * @param clientId The client id in this grant request
 	 * @param clientSecret The client secret in this grant request
@@ -69,7 +69,7 @@ public class AccessTokenGrantRequest implements ParametersMap{
 	/**
 	 * Maps Bean introspection property descriptors name to OAuth2 valid payload
 	 * property names.
-	 * 
+	 *
 	 * @return
 	 */
 	protected static Map<String, String> getPropertyMap() {
@@ -78,7 +78,6 @@ public class AccessTokenGrantRequest implements ParametersMap{
 			propertyMap.put("grantType", "grant_type");
 			propertyMap.put("clientId", "client_id");
 			propertyMap.put("clientSecret", "client_secret");
-			propertyMap.put("scopes", "scope");
 			propertyMap = Collections.unmodifiableMap(propertyMap);
 		}
 		return propertyMap;
@@ -87,6 +86,9 @@ public class AccessTokenGrantRequest implements ParametersMap{
 	@Override
 	public Map<String, Object> map() throws Exception {
 		Map<String, Object> grant = BeanUtils.asMap(this, getPropertyMap());
+		if(this.scope !=null){
+			grant.put("scope",String.join(" ", this.scope));
+		}
 		return grant;
 	}
 
@@ -132,11 +134,8 @@ public class AccessTokenGrantRequest implements ParametersMap{
 		} else if (!grant_type.equals(other.grant_type))
 			return false;
 		if (scope == null) {
-			if (other.scope != null)
-				return false;
-		} else if (!scope.equals(other.scope))
-			return false;
-		return true;
-	}
+            return other.scope == null;
+		} else return scope.equals(other.scope);
+    }
 
 }
