@@ -87,7 +87,7 @@ public class AccessToken implements ParametersMap {
             if(map.get("scope") instanceof Collection<?>){
                 this.scopes = (Collection<String>) map.get("scope");
             } else{
-                this.scopes = Arrays.asList(((String) map.get("scope")).split(""));
+                this.scopes = Arrays.asList(((String) map.get("scope")).split(" "));
             }
         }
 	}
