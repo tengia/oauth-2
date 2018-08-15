@@ -93,7 +93,7 @@ public class AccessTokenTest {
     @Test
     public void testMapConstructorSpaceSeparatedScopesString() {
         Map<String, Object> map = new HashMap<>();
-        Collection<String> scopes = new ArrayList<>();d
+        Collection<String> scopes = new ArrayList<>();
         scopes.add("a");
         scopes.add("b");
         map.put("scope", "a b");
