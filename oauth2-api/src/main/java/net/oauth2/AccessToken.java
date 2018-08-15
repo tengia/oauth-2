@@ -1,13 +1,14 @@
-/* 
+/*
  * Copyright (c) 2017 Georgi Pavlov (georgi.pavlov@isoft-technology.com).
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the MIT license which accompanies 
- * this distribution, and is available at 
+ * are made available under the terms of the MIT license which accompanies
+ * this distribution, and is available at
  * https://github.com/tengia/oauth-2/blob/master/LICENSE
  */
 
 package net.oauth2;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,7 +19,7 @@ import java.util.Map;
  * https://tools.ietf.org/html/rfc6749#section-4.1.4
  */
 public class AccessToken implements ParametersMap {
-	
+
 	/**
 	 * The access token string as issued by the authorization server.
 	 * Required.
@@ -28,20 +29,20 @@ public class AccessToken implements ParametersMap {
 	 * The type of this token, typically just the string “bearer”.
 	 * Required
 	 */
-	private String tokenType;	
+	private String tokenType;
 	/**
 	 * If the access token expires, the server should reply with the duration of time the access token is granted for.
 	 * Required
 	 */
 	private long expiresIn;
 	/**
-	 * If the access token will expire, then it is useful to return a refresh token which applications can use to obtain another access token. 
+	 * If the access token will expire, then it is useful to return a refresh token which applications can use to obtain another access token.
 	 * However, tokens issued with the implicit grant cannot be issued a refresh token.
 	 * Optional
 	 */
 	private String refreshToken;
 	/**
-	 *  If the scope the user granted is identical to the scope the app requested, this parameter is optional. 
+	 *  If the scope the user granted is identical to the scope the app requested, this parameter is optional.
 	 *  If the granted scope is different from the requested scope, such as if the user modified the scope, then this parameter is required.
 	 *  Optional
 	 */
@@ -49,26 +50,26 @@ public class AccessToken implements ParametersMap {
 
 	/**
 	 * Initializes an oauth token object from standard properties.
-	 * 
+	 *
 	 * @param accessToken the "access_token" string.
 	 * @param tokenType the "token_type" string. Defaults to "Bearer".
 	 * @param expiresIn the "expires_in" integer number for seconds until expire.
 	 * @param refreshToken the "refresh_token" string.
-	 * @param scopes the token "scope" as a collection of scope strings 
+	 * @param scopes the token "scope" as a collection of scope strings
 	 */
 	public AccessToken(final String accessToken, String tokenType, final long expiresIn, final String refreshToken, final Collection<String> scopes) {
 		this.accessToken = accessToken;
 		if (tokenType == null)
 			tokenType = "Bearer";
 		this.tokenType = tokenType;
-		this.expiresIn = expiresIn;		
+		this.expiresIn = expiresIn;
 		this.refreshToken = refreshToken;
 		this.scopes = scopes;
 	}
-	
+
 	/**
 	 * Initialize from map of properties such as "access_token" and "expires_in".
-	 * 
+	 *
 	 * @param map
 	 */
 	@SuppressWarnings("unchecked")
@@ -77,11 +78,18 @@ public class AccessToken implements ParametersMap {
 			throw new IllegalArgumentException("map is null");
 		this.accessToken = (String) map.get("access_token");
 		this.tokenType = (String) map.getOrDefault("token_type", "Bearer");
-		Long val = (Long) map.get("expires_in");
-		if(val!=null)
-			this.expiresIn = Long.parseLong(String.valueOf(val));
+		if(map.containsKey("expires_in")){
+			//Create a new long so that the case where expires_in is an integer is handled.
+			this.expiresIn = new Long(String.valueOf(map.get("expires_in")));
+		}
 		this.refreshToken = (String) map.get("refresh_token");
-		this.scopes = (Collection<String>) map.get("scope");
+		if(map.containsKey("scope")){
+            if(map.get("scope") instanceof Collection<?>){
+                this.scopes = (Collection<String>) map.get("scope");
+            } else{
+                this.scopes = Arrays.asList(((String) map.get("scope")).split(" "));
+            }
+        }
 	}
 
 	/**
@@ -119,7 +127,7 @@ public class AccessToken implements ParametersMap {
 	public final long getExpiresIn() {
 		return expiresIn;
 	}
-	
+
 	/**
 	 * Checks if scope is one of the configured scopes for this access token.
 	 * @param scope
@@ -134,13 +142,13 @@ public class AccessToken implements ParametersMap {
 		return "AccessToken [accessToken=" + accessToken + ", tokenType=" + tokenType + ", expiresIn=" + expiresIn
 				+ ", refreshToken=" + refreshToken + ", scopes=" + scopes + "]";
 	}
-	
+
 	private static Map<String, String> propertyMap;
 
 	/**
 	 * Maps Bean introspection property descriptors name to OAuth2 valid payload
 	 * property names.
-	 * 
+	 *
 	 * @return
 	 */
 	protected static Map<String, String> getPropertyMap() {
@@ -158,7 +166,7 @@ public class AccessToken implements ParametersMap {
 
 	/**
 	 * Returns the properties of this token object as map.
-	 * 
+	 *
 	 */
 	public Map<String, Object> map() throws Exception {
 		Map<String, Object> grant = BeanUtils.asMap(this, getPropertyMap());

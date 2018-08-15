@@ -21,11 +21,9 @@ import net.oauth2.AccessToken;
 import net.oauth2.AccessTokenGrantRequest;
 import net.oauth2.ProtocolError;
 import net.oauth2.RefreshTokenGrantRequest;
-import net.oauth2.client.OAuth2ProtocolException;
 import net.oauth2.client.TokenService;
 import net.oauth2.jackson.OAuth2ObjectMapper;
 import okhttp3.Credentials;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import retrofit2.Response;
@@ -109,34 +107,31 @@ public class RetrofitTokenService<S extends TokenEndpoint, T extends AccessToken
 	}
 	
 	protected OkHttpClient httpClient(String userId, String password){
-		OkHttpClient httpClient = new OkHttpClient.Builder()
-				.addInterceptor(new Interceptor(){
-					@Override
-					public okhttp3.Response intercept(Chain chain) throws IOException {
-						Request request = chain.request();
-						String auth = request.header("Authorization");
-						if (auth == null) {
-							request = request.newBuilder()
-							.addHeader("Authorization", Credentials.basic(userId, password)).build();
-						}
-						return chain.proceed(request);
-					}})
+		return new OkHttpClient.Builder()
+				.addInterceptor(chain -> {
+					Request request = chain.request();
+					String auth = request.header("Authorization");
+					if (auth == null && !userId.equals("") && !password.equals("")) {
+						request = request.newBuilder()
+						.addHeader("Authorization", Credentials.basic(userId, password)).build();
+					}
+					return chain.proceed(request);
+				})
 				.build();
-		return httpClient;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public T fetch() throws OAuth2ProtocolException, IOException {
+	public T fetch() throws IOException {
 		LOGGER.trace("Fetching Access Token");
 
-		Map<String, Object> grantRequestFormFrields = null;
+		Map<String, Object> grantRequestFormFields;
 		try {
-			grantRequestFormFrields = this.grant.map();
+			grantRequestFormFields = this.grant.map();
 		} catch (Exception e) {
 			throw new IOException(e);
 		}
-		Response<String> response = this.tokenService.getAccessToken(TokenEndpoint.DEFAULT_URL_PATH, grantRequestFormFrields).execute();
+		Response<String> response = this.tokenService.getAccessToken(TokenEndpoint.DEFAULT_URL_PATH, grantRequestFormFields).execute();
 		
 		T token = null;
 		if (response.isSuccessful()) {
@@ -160,7 +155,7 @@ public class RetrofitTokenService<S extends TokenEndpoint, T extends AccessToken
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public T refresh(String refreshToken) throws OAuth2ProtocolException, IOException {
+	public T refresh(String refreshToken) throws IOException {
 		if (refreshToken == null)
 			throw new IllegalArgumentException("refreshToken is null");
 		
@@ -168,14 +163,14 @@ public class RetrofitTokenService<S extends TokenEndpoint, T extends AccessToken
 			throw new IllegalStateException("No refresh token grant initialized. Either authroization server does not support refreshing tokens or fetchToken was never invoked on this instance prior ot invoking refresh.");
 
 		LOGGER.trace("Refreshing Access Token");
-		Map<String, Object> grantRequestFormFrields = null;
+		Map<String, Object> grantRequestFormFields;
 		try {
-			grantRequestFormFrields = this.refreshTokenGrantRequest.map();
+			grantRequestFormFields = this.refreshTokenGrantRequest.map();
 		} catch (Exception e) {
 			throw new IOException(e);
 		}
 
-		Response<String> response = this.tokenService.refreshToken(TokenEndpoint.DEFAULT_URL_PATH, grantRequestFormFrields).execute();
+		Response<String> response = this.tokenService.refreshToken(TokenEndpoint.DEFAULT_URL_PATH, grantRequestFormFields).execute();
 
 		T token = null;
 		if (response.isSuccessful()) {
@@ -183,10 +178,7 @@ public class RetrofitTokenService<S extends TokenEndpoint, T extends AccessToken
 			token = (T) this.objectMapper.readValue(tokenString, this.accessTokenClass);
 			
 			Collection<String> scopes = token.getScopes();
-			String refreshTokenString = token.getRefreshToken();//did we get a new refresh string?
-			if(refreshTokenString == null)
-				refreshTokenString = refreshToken;
-			else{
+			if(token.getRefreshToken() != null){
 				 /*If a new refresh token is issued, the refresh token scope MUST be identical to that of the refresh token included by the client in the request.*/
 				if(this.refreshTokenGrantRequest.getScopes()!=scopes && (this.refreshTokenGrantRequest.getScopes().size()!= scopes.size() || !this.refreshTokenGrantRequest.getScopes().containsAll(scopes)))
 					throw new IllegalStateException("The new refresh token scope'"+scopes+"' is not identical to that of the refresh token included by the client in the request: " + this.refreshTokenGrantRequest.getScopes());

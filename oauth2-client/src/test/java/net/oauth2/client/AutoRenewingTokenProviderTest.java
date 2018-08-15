@@ -8,6 +8,7 @@
 package net.oauth2.client;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -15,23 +16,20 @@ import static org.junit.Assert.fail;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAmount;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -88,7 +86,7 @@ public class AutoRenewingTokenProviderTest {
 		given(trs.tokenRenewTask.getToken()).willReturn(expectedTemporalToken);		
 		Duration delayDuration = trs.estimatedRepetitionsDelay();
 		assertNotNull(delayDuration);
-		assertTrue(delayDuration.compareTo(Duration.ofSeconds(1L)) == 0);
+		assertEquals(0, delayDuration.compareTo(Duration.ofSeconds(1L)));
 	}
 	
 /*	@Test
@@ -144,7 +142,7 @@ public class AutoRenewingTokenProviderTest {
 	}*/
 	
 	@Test
-	public void testDelayNullWhileNotStarted() throws OAuth2ProtocolException, IOException {
+	public void testDelayNullWhileNotStarted() {
 		AutoRenewingTokenProvider<AccessToken> trs = new AutoRenewingTokenProvider<>(this.tokenService);
 		try{
 			trs.estimatedRepetitionsDelay();
@@ -264,17 +262,17 @@ public class AutoRenewingTokenProviderTest {
 	@Test
 	public void testNoRetryPolicy() {
 		RetryPolicy policy = new NoRetryPolicy();
-		assertTrue(policy.maxRetries() == 1);
-		assertTrue(policy.onException(new IOException()) == false);
-		assertTrue(policy.periodBetweenRetries() == 0);
+		assertEquals(1, policy.maxRetries());
+		assertFalse(policy.onException(new IOException()));
+		assertEquals(0, policy.periodBetweenRetries());
 	}
 
 	@Test
 	public void testMinRetryPolicy() {
 		RetryPolicy policy = new MinimalRetryPolicy();
-		assertTrue(policy.maxRetries() == 3);
-		assertTrue(policy.onException(new IOException()) == true);
-		assertTrue(policy.periodBetweenRetries() == 60000L);
+		assertEquals(3, policy.maxRetries());
+		assertTrue(policy.onException(new IOException()));
+		assertEquals(60000L, policy.periodBetweenRetries());
 	}
 
 /*	@Test
@@ -320,7 +318,7 @@ public class AutoRenewingTokenProviderTest {
 	}*/
 	
 	@Test
-	public void testRefresh() throws IOException, ExecutionException {
+	public void testRefresh() throws IOException {
 		long expireInPeriod = 600L;// Tokens TTL is 600ms
 		final TemporalAccessToken<AccessToken> temporalFetchedToken = TemporalAccessToken.create(new AccessToken("fetched",null,expireInPeriod,"refresh-token",null)).ttlUnit(ChronoUnit.MILLIS);
 		given(this.tokenService.fetch()).willReturn(temporalFetchedToken.token());
