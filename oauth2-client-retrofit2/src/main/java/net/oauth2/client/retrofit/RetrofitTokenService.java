@@ -111,7 +111,7 @@ public class RetrofitTokenService<S extends TokenEndpoint, T extends AccessToken
 				.addInterceptor(chain -> {
 					Request request = chain.request();
 					String auth = request.header("Authorization");
-					if (auth == null && !userId.equals("") && ! password.equals("")) {
+					if (auth == null && !userId.equals("") && !password.equals("")) {
 						request = request.newBuilder()
 						.addHeader("Authorization", Credentials.basic(userId, password)).build();
 					}
